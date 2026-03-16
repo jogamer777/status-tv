@@ -1,0 +1,209 @@
+:root {
+  --bg: #0d0d0d;
+  --card-bg: #1a1a1a;
+  --accent: #e05a00;
+  --text: #e8e8e8;
+  --text-dim: #888;
+  --online: #22c55e;
+  --offline: #ef4444;
+  --border: #2a2a2a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Dashboard ─────────────────────────────── */
+#dashboard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  position: relative;
+  padding: 20px;
+}
+
+#printer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 900px;
+  width: 100%;
+}
+
+.printer-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.printer-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.printer-icon { font-size: 1.4rem; }
+.printer-name { font-size: 1.1rem; font-weight: 600; flex: 1; }
+
+.printer-status-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.printer-status-dot.online  { background: var(--online); box-shadow: 0 0 6px var(--online); }
+.printer-status-dot.offline { background: var(--offline); }
+
+.printer-state {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.printer-filename {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  min-height: 1.2em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.progress-bar-wrap {
+  background: var(--border);
+  border-radius: 8px;
+  height: 6px;
+  margin-bottom: 16px;
+}
+.progress-bar {
+  background: var(--accent);
+  height: 100%;
+  border-radius: 8px;
+  width: 0%;
+  transition: width 0.5s ease;
+}
+
+.temps { display: flex; gap: 16px; }
+.temp-block { flex: 1; }
+.temp-label { display: block; font-size: 0.7rem; color: var(--text-dim); margin-bottom: 2px; }
+.temp-value { font-size: 1rem; font-weight: 600; }
+
+/* ── Camera PiP (Corners) ──────────────────── */
+#camera-pip-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.camera-pip {
+  position: absolute;
+  width: 200px;
+  height: 113px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  pointer-events: auto;
+  transition: all 0.4s ease;
+  background: #000;
+}
+.camera-pip:nth-child(1) { bottom: 12px; left: 12px; }
+.camera-pip:nth-child(2) { bottom: 12px; right: 12px; }
+.camera-pip:nth-child(3) { top: 12px; left: 12px; }
+.camera-pip:nth-child(4) { top: 12px; right: 12px; }
+
+.camera-pip img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+.camera-pip-label {
+  position: absolute;
+  bottom: 4px; left: 6px;
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.7);
+  text-shadow: 0 1px 3px #000;
+}
+
+/* ── Motion Alert View ─────────────────────── */
+#camera-alert-view {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 100;
+  display: flex;
+  align-items: stretch;
+}
+
+#camera-grid-alert {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.camera-alert-cell {
+  flex: 1;
+  position: relative;
+  border: 1px solid #222;
+  overflow: hidden;
+}
+
+.camera-alert-cell img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+.camera-alert-label {
+  position: absolute;
+  top: 10px; left: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 6px #000;
+  background: rgba(0,0,0,0.4);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.camera-alert-cell.motion-active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 3px solid var(--accent);
+  pointer-events: none;
+  border-radius: 2px;
+  animation: pulse-border 1s infinite;
+}
+
+@keyframes pulse-border {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* ── Motion Banner ─────────────────────────── */
+#motion-banner {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 6px 20px;
+  border-radius: 20px;
+  z-index: 200;
+  letter-spacing: 0.05em;
+}
+
+.hidden { display: none !important; }

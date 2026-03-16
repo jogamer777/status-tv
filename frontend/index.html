@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status TV</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Main Dashboard -->
+  <div id="dashboard">
+    <div id="printer-grid">
+      <div class="printer-card" id="printer-crx">
+        <div class="printer-header">
+          <span class="printer-icon">🖨️</span>
+          <span class="printer-name">Creality CRX-Pro</span>
+          <span class="printer-status-dot offline" id="crx-dot"></span>
+        </div>
+        <div class="printer-body">
+          <div class="printer-state" id="crx-state">Offline</div>
+          <div class="printer-filename" id="crx-filename"></div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar" id="crx-progress"></div>
+          </div>
+          <div class="temps">
+            <div class="temp-block">
+              <span class="temp-label">Hotend</span>
+              <span class="temp-value" id="crx-hotend">—</span>
+            </div>
+            <div class="temp-block">
+              <span class="temp-label">Bett</span>
+              <span class="temp-value" id="crx-bed">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="printer-card" id="printer-k2">
+        <div class="printer-header">
+          <span class="printer-icon">🖨️</span>
+          <span class="printer-name">Creality K2</span>
+          <span class="printer-status-dot offline" id="k2-dot"></span>
+        </div>
+        <div class="printer-body">
+          <div class="printer-state" id="k2-state">Offline</div>
+          <div class="printer-filename" id="k2-filename"></div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar" id="k2-progress"></div>
+          </div>
+          <div class="temps">
+            <div class="temp-block">
+              <span class="temp-label">Hotend</span>
+              <span class="temp-value" id="k2-hotend">—</span>
+            </div>
+            <div class="temp-block">
+              <span class="temp-label">Bett</span>
+              <span class="temp-value" id="k2-bed">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Camera overlays (PiP corners) -->
+    <div id="camera-pip-container"></div>
+  </div>
+
+  <!-- Motion Alert: Camera Grid -->
+  <div id="camera-alert-view" class="hidden">
+    <div id="camera-grid-alert"></div>
+  </div>
+
+  <div id="motion-banner" class="hidden">Bewegung erkannt</div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "server": {
+    "port": 3000,
+    "host": "0.0.0.0"
+  },
+  "motioneye": {
+    "url": "http://localhost:8765",
+    "admin_password": "",
+    "cameras": [
+      { "id": 1, "name": "TuerPin",  "stream_port": 8081 },
+      { "id": 2, "name": "Gang",     "stream_port": 8082 },
+      { "id": 3, "name": "Kamera3",  "stream_port": 8083 },
+      { "id": 4, "name": "Kamera4",  "stream_port": 8084 }
+    ]
+  },
+  "printers": {
+    "crx_pro": {
+      "type": "octoprint",
+      "url": "http://localhost:5000",
+      "api_key": "YOUR_OCTOPRINT_API_KEY"
+    },
+    "k2": {
+      "type": "moonraker",
+      "url": "http://localhost:7125"
+    }
+  }
+}
