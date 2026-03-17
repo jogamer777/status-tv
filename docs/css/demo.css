@@ -1,0 +1,162 @@
+/* ── Demo: Canvas Camera Placeholders ─────────────────────────────── */
+.camera-pip canvas,
+.camera-alert-cell canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ── Demo Panel Container ──────────────────────────────────────────── */
+#demo-panel {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 300;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+#demo-toggle {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 6px 16px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  box-shadow: 0 4px 16px var(--accent-glow);
+  order: 2;
+  transition: opacity 0.15s;
+}
+#demo-toggle:hover { opacity: 0.85; }
+
+#demo-body {
+  order: 1;
+  background: var(--card-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  width: 284px;
+  box-shadow: var(--shadow-card);
+}
+
+.demo-collapsed #demo-body { display: none; }
+
+/* ── Section Headers ───────────────────────────────────────────────── */
+.demo-section-title {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  margin-top: 14px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border);
+}
+.demo-section-title:first-child { margin-top: 0; }
+
+/* ── Camera Buttons ────────────────────────────────────────────────── */
+#demo-cam-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.demo-cam-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card-header-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 7px 10px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.demo-cam-btn:hover { background: rgba(224, 90, 0, 0.08); border-color: var(--accent); }
+.demo-cam-btn.active {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.demo-cam-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.demo-cam-btn.active .demo-cam-dot {
+  background: var(--accent);
+  box-shadow: 0 0 5px var(--accent);
+}
+
+/* ── Printer Controls ──────────────────────────────────────────────── */
+.demo-printer-row {
+  margin-bottom: 8px;
+}
+
+.demo-printer-label {
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-bottom: 5px;
+}
+
+.demo-state-btns {
+  display: flex;
+  gap: 5px;
+}
+
+.demo-state-btn {
+  flex: 1;
+  background: var(--card-header-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 5px 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.02em;
+}
+.demo-state-btn:hover { color: var(--text); border-color: var(--border-strong); }
+.demo-state-btn.active {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Autoplay Button ───────────────────────────────────────────────── */
+.demo-cycle-btn {
+  width: 100%;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  border-radius: var(--radius-sm);
+  color: var(--online);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 8px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  margin-top: 10px;
+  transition: background 0.2s;
+}
+.demo-cycle-btn:hover { background: rgba(34, 197, 94, 0.16); }
+.demo-cycle-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

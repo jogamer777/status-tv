@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Status TV</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <title>Status TV — Demo</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/demo.css">
 </head>
 <body>
   <!-- Main Dashboard -->
@@ -100,6 +100,22 @@
     <span id="print-complete-label"></span>
   </div>
 
+  <!-- Demo Controls Panel -->
+  <div id="demo-panel" class="demo-collapsed">
+    <button id="demo-toggle" aria-label="Demo-Controls ein-/ausblenden">DEMO</button>
+    <div id="demo-body">
+      <div class="demo-section-title">Kameras</div>
+      <div id="demo-cam-buttons"></div>
+
+      <div class="demo-section-title">Drucker</div>
+      <div id="demo-printer-controls"></div>
+
+      <button class="demo-cycle-btn" id="demo-autoplay">▶ Komplett-Demo abspielen</button>
+    </div>
+  </div>
+
+  <script src="js/camera-canvas.js"></script>
+  <script src="js/demo-bootstrap.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
