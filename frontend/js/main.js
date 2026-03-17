@@ -80,6 +80,12 @@ function showDashboard() {
 function onMotionUpdate() {
   const anyActive = Object.values(motionState).some(Boolean);
 
+  // Highlight active PiP cameras
+  document.querySelectorAll('.camera-pip').forEach(pip => {
+    const id = parseInt(pip.dataset.camId);
+    pip.classList.toggle('motion-active', !!motionState[id]);
+  });
+
   if (anyActive) {
     clearTimeout(alertTimeout);
     showAlertView();

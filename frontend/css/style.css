@@ -1,78 +1,154 @@
+/* ── Design Tokens ─────────────────────────────────────────────────── */
 :root {
-  --bg: #0d0d0d;
-  --card-bg: #1a1a1a;
-  --accent: #e05a00;
-  --text: #e8e8e8;
-  --text-dim: #888;
-  --online: #22c55e;
-  --offline: #ef4444;
-  --border: #2a2a2a;
+  --bg:              #0a0a0a;
+  --card-bg:         #111111;
+  --card-header-bg:  #161616;
+  --accent:          #e05a00;
+  --accent-subtle:   rgba(224, 90, 0, 0.12);
+  --accent-glow:     rgba(224, 90, 0, 0.25);
+  --text:            #f0f0f0;
+  --text-dim:        #6b7280;
+  --text-muted:      #4b5563;
+  --online:          #22c55e;
+  --online-glow:     rgba(34, 197, 94, 0.3);
+  --offline:         #ef4444;
+  --border:          rgba(255, 255, 255, 0.06);
+  --border-strong:   rgba(255, 255, 255, 0.10);
+  --shadow-card:     0 4px 24px rgba(0, 0, 0, 0.6), 0 1px 4px rgba(0, 0, 0, 0.4);
+  --shadow-sm:       0 2px 8px rgba(0, 0, 0, 0.4);
+  --radius-card:     12px;
+  --radius-sm:       8px;
+  --radius-pill:     100px;
 }
 
+/* ── Reset ─────────────────────────────────────────────────────────── */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   height: 100vh;
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ── Dashboard ─────────────────────────────── */
+/* ── Dashboard ─────────────────────────────────────────────────────── */
 #dashboard {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
   position: relative;
-  padding: 20px;
+  padding: 24px;
 }
 
 #printer-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  max-width: 900px;
+  gap: 20px;
+  max-width: 940px;
   width: 100%;
 }
 
+/* ── Printer Card ──────────────────────────────────────────────────── */
 .printer-card {
   background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 24px;
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.printer-card:hover {
+  box-shadow: var(--shadow-card), 0 0 0 1px var(--border-strong);
 }
 
 .printer-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 16px;
+  padding: 14px 18px;
+  background: var(--card-header-bg);
+  border-bottom: 1px solid var(--border);
 }
 
-.printer-icon { font-size: 1.4rem; }
-.printer-name { font-size: 1.1rem; font-weight: 600; flex: 1; }
+.printer-icon {
+  display: flex;
+  align-items: center;
+  color: var(--accent);
+  flex-shrink: 0;
+}
 
+.printer-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  flex: 1;
+}
+
+/* Status Dot with pulse ring */
 .printer-status-dot {
-  width: 10px; height: 10px;
+  position: relative;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
 }
-.printer-status-dot.online  { background: var(--online); box-shadow: 0 0 6px var(--online); }
-.printer-status-dot.offline { background: var(--offline); }
 
-.printer-state {
-  font-size: 1.3rem;
-  font-weight: 700;
+.printer-status-dot::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.printer-status-dot.online {
+  background: var(--online);
+  box-shadow: 0 0 0 2px var(--online-glow);
+}
+
+.printer-status-dot.online::before {
+  background: var(--online);
+  animation: pulse-dot 2.5s ease-out infinite;
+}
+
+.printer-status-dot.offline {
+  background: var(--offline);
+}
+
+@keyframes pulse-dot {
+  0%   { opacity: 0.6; transform: scale(1); }
+  70%  { opacity: 0;   transform: scale(2.2); }
+  100% { opacity: 0;   transform: scale(2.2); }
+}
+
+.printer-body {
+  padding: 18px;
+}
+
+/* State badge (pill) */
+.state-badge {
+  display: inline-block;
+  background: var(--accent-subtle);
   color: var(--accent);
-  margin-bottom: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(224, 90, 0, 0.2);
+  margin-bottom: 10px;
 }
 
 .printer-filename {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--text-dim);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   min-height: 1.2em;
   white-space: nowrap;
   overflow: hidden;
@@ -80,25 +156,55 @@ body {
 }
 
 .progress-bar-wrap {
-  background: var(--border);
-  border-radius: 8px;
-  height: 6px;
-  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-pill);
+  height: 5px;
+  margin-bottom: 8px;
+  overflow: hidden;
 }
+
 .progress-bar {
-  background: var(--accent);
+  background: linear-gradient(90deg, var(--accent), #ff8c42);
   height: 100%;
-  border-radius: 8px;
+  border-radius: var(--radius-pill);
   width: 0%;
-  transition: width 0.5s ease;
+  transition: width 0.6s ease;
+  box-shadow: 0 0 6px var(--accent-glow);
 }
 
-.temps { display: flex; gap: 16px; }
-.temp-block { flex: 1; }
-.temp-label { display: block; font-size: 0.7rem; color: var(--text-dim); margin-bottom: 2px; }
-.temp-value { font-size: 1rem; font-weight: 600; }
+.printer-eta {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  min-height: 1em;
+  letter-spacing: 0.02em;
+}
 
-/* ── Camera PiP (Corners) ──────────────────── */
+.temps {
+  display: flex;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.temp-block { flex: 1; }
+
+.temp-label {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 3px;
+}
+
+.temp-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Camera PiP (Corners) ──────────────────────────────────────────── */
 #camera-pip-container {
   position: fixed;
   inset: 0;
@@ -108,19 +214,31 @@ body {
 
 .camera-pip {
   position: absolute;
-  width: 200px;
-  height: 113px;
-  border: 2px solid var(--border);
-  border-radius: 8px;
+  width: 210px;
+  height: 118px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
   overflow: hidden;
   pointer-events: auto;
-  transition: all 0.4s ease;
   background: #000;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.camera-pip:nth-child(1) { bottom: 12px; left: 12px; }
-.camera-pip:nth-child(2) { bottom: 12px; right: 12px; }
-.camera-pip:nth-child(3) { top: 12px; left: 12px; }
-.camera-pip:nth-child(4) { top: 12px; right: 12px; }
+
+.camera-pip:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.7);
+}
+
+.camera-pip.motion-active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow), var(--shadow-sm);
+}
+
+.camera-pip:nth-child(1) { bottom: 14px; left: 14px; }
+.camera-pip:nth-child(2) { bottom: 14px; right: 14px; }
+.camera-pip:nth-child(3) { top: 14px;    left: 14px; }
+.camera-pip:nth-child(4) { top: 14px;    right: 14px; }
 
 .camera-pip img {
   width: 100%; height: 100%;
@@ -129,32 +247,66 @@ body {
 
 .camera-pip-label {
   position: absolute;
-  bottom: 4px; left: 6px;
-  font-size: 0.65rem;
-  color: rgba(255,255,255,0.7);
-  text-shadow: 0 1px 3px #000;
+  bottom: 6px; left: 8px;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
-/* ── Motion Alert View ─────────────────────── */
+/* ── Motion Alert View ─────────────────────────────────────────────── */
 #camera-alert-view {
   position: fixed;
   inset: 0;
   background: #000;
   z-index: 100;
   display: flex;
+  flex-direction: column;
   align-items: stretch;
+}
+
+#camera-alert-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  background: rgba(10, 10, 10, 0.9);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  backdrop-filter: blur(8px);
+}
+
+#camera-alert-topbar .alert-icon {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: pulse-dot 1s ease-out infinite;
+}
+
+#camera-alert-topbar .alert-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 #camera-grid-alert {
   display: flex;
-  width: 100%;
-  height: 100%;
+  flex: 1;
 }
 
 .camera-alert-cell {
   flex: 1;
   position: relative;
-  border: 1px solid #222;
+  border: 1px solid #1a1a1a;
   overflow: hidden;
 }
 
@@ -165,75 +317,90 @@ body {
 
 .camera-alert-label {
   position: absolute;
-  top: 10px; left: 14px;
-  font-size: 1rem;
+  top: 12px; left: 14px;
+  font-size: 0.72rem;
   font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: #fff;
-  text-shadow: 0 1px 6px #000;
-  background: rgba(0,0,0,0.4);
-  padding: 2px 8px;
-  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .camera-alert-cell.motion-active::after {
   content: '';
   position: absolute;
   inset: 0;
-  border: 3px solid var(--accent);
+  border: 2px solid var(--accent);
   pointer-events: none;
-  border-radius: 2px;
-  animation: pulse-border 1s infinite;
+  animation: pulse-border 1.2s ease-in-out infinite;
 }
 
 @keyframes pulse-border {
   0%, 100% { opacity: 1; }
-  50%       { opacity: 0.3; }
+  50%       { opacity: 0.2; }
 }
 
-/* ── Motion Banner ─────────────────────────── */
+/* ── Motion Banner ─────────────────────────────────────────────────── */
 #motion-banner {
   position: fixed;
-  top: 16px;
+  top: 14px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--accent);
   color: #fff;
   font-weight: 700;
-  font-size: 0.9rem;
-  padding: 6px 20px;
-  border-radius: 20px;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 18px;
+  border-radius: var(--radius-pill);
   z-index: 200;
-  letter-spacing: 0.05em;
+  box-shadow: 0 4px 16px var(--accent-glow);
 }
 
-/* ── Print ETA ─────────────────────────────── */
-.printer-eta {
-  font-size: 0.75rem;
-  color: var(--text-dim);
-  margin-bottom: 12px;
-  min-height: 1em;
-}
-
-/* ── Print Complete Banner ─────────────────── */
+/* ── Print Complete Toast ──────────────────────────────────────────── */
 #print-complete-banner {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: var(--online);
-  color: #fff;
-  font-size: 1.4rem;
-  font-weight: 700;
-  text-align: center;
-  padding: 20px;
+  top: 20px;
+  right: 20px;
+  background: #0f2018;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-left: 3px solid var(--online);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 14px 20px;
+  border-radius: var(--radius-card);
   z-index: 150;
   cursor: pointer;
-  animation: slide-down 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(34, 197, 94, 0.1);
+  animation: slide-in-right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  max-width: 320px;
 }
 
-@keyframes slide-down {
-  from { transform: translateY(-100%); }
-  to   { transform: translateY(0); }
+#print-complete-banner::before {
+  content: '✓';
+  display: inline-block;
+  width: 18px; height: 18px;
+  background: var(--online);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 900;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 50%;
+  margin-right: 10px;
+  vertical-align: middle;
 }
 
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Utility ───────────────────────────────────────────────────────── */
 .hidden { display: none !important; }

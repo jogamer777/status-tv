@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
@@ -6,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+const motionAnalyzer = require('./motionAnalyzer');
 
 const app = express();
 app.use(cors());
@@ -44,10 +46,16 @@ app.post('/webhook/motion/:cameraId/:event', (req, res) => {
     motionState[id] = true;
     console.log(`Motion START on camera ${id}`);
     broadcast({ type: 'motion', cameraId: id, active: true, motionState });
+    // Trigger Immich frame capture pipeline
+    const cam = config.motioneye.cameras.find(c => c.id === id);
+    if (cam) motionAnalyzer.startCapture(id, cam, req.hostname || 'localhost');
   } else if (event === 'end') {
     motionState[id] = false;
     console.log(`Motion END on camera ${id}`);
     broadcast({ type: 'motion', cameraId: id, active: false, motionState });
+    // Finalize capture and upload best frames
+    const cam = config.motioneye.cameras.find(c => c.id === id);
+    if (cam) motionAnalyzer.finalize(id, cam.name);
   }
 
   res.sendStatus(200);

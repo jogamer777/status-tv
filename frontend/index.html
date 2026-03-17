@@ -4,20 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Status TV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <!-- Main Dashboard -->
   <div id="dashboard">
     <div id="printer-grid">
+
+      <!-- Creality CRX-Pro -->
       <div class="printer-card" id="printer-crx">
         <div class="printer-header">
-          <span class="printer-icon">🖨️</span>
+          <span class="printer-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"/>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+              <rect x="6" y="14" width="12" height="8"/>
+            </svg>
+          </span>
           <span class="printer-name">Creality CRX-Pro</span>
           <span class="printer-status-dot offline" id="crx-dot"></span>
         </div>
         <div class="printer-body">
-          <div class="printer-state" id="crx-state">Offline</div>
+          <span class="state-badge" id="crx-state">Offline</span>
           <div class="printer-filename" id="crx-filename"></div>
           <div class="progress-bar-wrap">
             <div class="progress-bar" id="crx-progress"></div>
@@ -36,14 +45,21 @@
         </div>
       </div>
 
+      <!-- Creality K2 -->
       <div class="printer-card" id="printer-k2">
         <div class="printer-header">
-          <span class="printer-icon">🖨️</span>
+          <span class="printer-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"/>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+              <rect x="6" y="14" width="12" height="8"/>
+            </svg>
+          </span>
           <span class="printer-name">Creality K2</span>
           <span class="printer-status-dot offline" id="k2-dot"></span>
         </div>
         <div class="printer-body">
-          <div class="printer-state" id="k2-state">Offline</div>
+          <span class="state-badge" id="k2-state">Offline</span>
           <div class="printer-filename" id="k2-filename"></div>
           <div class="progress-bar-wrap">
             <div class="progress-bar" id="k2-progress"></div>
@@ -61,6 +77,7 @@
           </div>
         </div>
       </div>
+
     </div>
 
     <!-- Camera overlays (PiP corners) -->
@@ -69,12 +86,16 @@
 
   <!-- Motion Alert: Camera Grid -->
   <div id="camera-alert-view" class="hidden">
+    <div id="camera-alert-topbar">
+      <span class="alert-icon"></span>
+      <span class="alert-title">Bewegung erkannt</span>
+    </div>
     <div id="camera-grid-alert"></div>
   </div>
 
   <div id="motion-banner" class="hidden">Bewegung erkannt</div>
 
-  <!-- Print completion banner -->
+  <!-- Print completion toast -->
   <div id="print-complete-banner" class="hidden">
     <span id="print-complete-label"></span>
   </div>
