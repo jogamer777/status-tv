@@ -13,6 +13,9 @@
       { "id": 4, "name": "Kamera4",  "stream_port": 8084 }
     ]
   },
+  "ui": {
+    "motion_clear_delay_ms": 8000
+  },
   "printers": {
     "crx_pro": {
       "type": "octoprint",

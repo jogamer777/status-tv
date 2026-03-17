@@ -58,6 +58,11 @@ app.get('/api/cameras', (req, res) => {
   res.json(config.motioneye.cameras);
 });
 
+// UI config endpoint (safe subset — no secrets)
+app.get('/api/config/ui', (req, res) => {
+  res.json(config.ui || {});
+});
+
 // Printer status endpoints
 const printerRoutes = require('./routes/printers');
 app.use('/api/printers', printerRoutes(config));

@@ -22,6 +22,7 @@
           <div class="progress-bar-wrap">
             <div class="progress-bar" id="crx-progress"></div>
           </div>
+          <div class="printer-eta" id="crx-eta"></div>
           <div class="temps">
             <div class="temp-block">
               <span class="temp-label">Hotend</span>
@@ -47,6 +48,7 @@
           <div class="progress-bar-wrap">
             <div class="progress-bar" id="k2-progress"></div>
           </div>
+          <div class="printer-eta" id="k2-eta"></div>
           <div class="temps">
             <div class="temp-block">
               <span class="temp-label">Hotend</span>
@@ -71,6 +73,11 @@
   </div>
 
   <div id="motion-banner" class="hidden">Bewegung erkannt</div>
+
+  <!-- Print completion banner -->
+  <div id="print-complete-banner" class="hidden">
+    <span id="print-complete-label"></span>
+  </div>
 
   <script src="js/main.js"></script>
 </body>

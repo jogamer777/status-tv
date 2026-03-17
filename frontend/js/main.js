@@ -7,10 +7,23 @@ const PRINTER_POLL_INTERVAL = 10000; // ms
 let cameras    = [];
 let motionState = {};
 let alertTimeout = null;
-const MOTION_CLEAR_DELAY = 8000; // ms after last motion event before returning to dashboard
+let MOTION_CLEAR_DELAY = 8000; // ms — overridden by /api/config/ui
+
+// WebSocket reconnect state
+let ws = null;
+let wsReconnectDelay = 1000; // ms, doubles on each failure, max 30s
+
+// Print completion tracking
+const printerPrevState = {};
 
 // ── Init ─────────────────────────────────────────────────────────────
 async function init() {
+  // Load UI config (motion delay etc.)
+  try {
+    const uiCfg = await fetch(`${BACKEND_HTTP}/api/config/ui`).then(r => r.json());
+    if (uiCfg.motion_clear_delay_ms) MOTION_CLEAR_DELAY = uiCfg.motion_clear_delay_ms;
+  } catch (_) {}
+
   cameras = await fetch(`${BACKEND_HTTP}/api/cameras`).then(r => r.json()).catch(() => []);
   renderPiP();
   connectWebSocket();
@@ -79,7 +92,11 @@ function onMotionUpdate() {
 
 // ── WebSocket ─────────────────────────────────────────────────────────
 function connectWebSocket() {
-  const ws = new WebSocket(BACKEND_WS);
+  ws = new WebSocket(BACKEND_WS);
+
+  ws.onopen = () => {
+    wsReconnectDelay = 1000; // reset backoff on successful connection
+  };
 
   ws.onmessage = (ev) => {
     const msg = JSON.parse(ev.data);
@@ -93,8 +110,44 @@ function connectWebSocket() {
     }
   };
 
-  ws.onclose = () => setTimeout(connectWebSocket, 3000);
-  ws.onerror = () => ws.close();
+  ws.onclose = () => {
+    const delay = wsReconnectDelay + Math.random() * 1000;
+    wsReconnectDelay = Math.min(wsReconnectDelay * 2, 30000);
+    setTimeout(connectWebSocket, delay);
+  };
+
+  ws.onerror = () => {
+    if (ws.readyState !== WebSocket.CLOSING && ws.readyState !== WebSocket.CLOSED) {
+      ws.close();
+    }
+  };
+}
+
+// ── Print Completion Alert ────────────────────────────────────────────
+function triggerCompletionAlert(printerId, filename) {
+  const banner = document.getElementById('print-complete-banner');
+  const label = document.getElementById('print-complete-label');
+  const name = printerId === 'crx' ? 'CRX-Pro' : 'K2';
+  label.textContent = `${name} — Druck fertig${filename ? ': ' + filename : ''}`;
+  banner.classList.remove('hidden');
+
+  // Web Audio: short chime via oscillator (no audio file needed)
+  try {
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.4, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.6);
+  } catch (_) {}
+
+  const dismiss = () => banner.classList.add('hidden');
+  banner.onclick = dismiss;
+  setTimeout(dismiss, 10000);
 }
 
 // ── Printer Polling ───────────────────────────────────────────────────
@@ -113,6 +166,7 @@ function updatePrinterCard(id, printer) {
   const progress = document.getElementById(`${id}-progress`);
   const hotend   = document.getElementById(`${id}-hotend`);
   const bed      = document.getElementById(`${id}-bed`);
+  const eta      = document.getElementById(`${id}-eta`);
 
   if (!printer || !printer.online) {
     dot.className = 'printer-status-dot offline';
@@ -121,11 +175,21 @@ function updatePrinterCard(id, printer) {
     progress.style.width = '0%';
     hotend.textContent = '—';
     bed.textContent = '—';
+    eta.textContent = '';
+    printerPrevState[id] = null;
     return;
   }
 
+  // Detect print completion transition
+  const prevState = printerPrevState[id];
+  const newState = printer.state || '';
+  if (prevState && /printing|running|druckt/i.test(prevState) && /complete|operational|fertig/i.test(newState)) {
+    triggerCompletionAlert(id, printer.filename);
+  }
+  printerPrevState[id] = newState;
+
   dot.className = 'printer-status-dot online';
-  state.textContent = capitalise(printer.state);
+  state.textContent = capitalise(newState);
   filename.textContent = printer.filename || '';
   progress.style.width = `${Math.round((printer.progress || 0) * 100)}%`;
 
@@ -134,6 +198,16 @@ function updatePrinterCard(id, printer) {
     ? `${Math.round(t.hotend)}°C / ${Math.round(t.hotend_target || 0)}°C` : '—';
   bed.textContent = t.bed != null
     ? `${Math.round(t.bed)}°C / ${Math.round(t.bed_target || 0)}°C` : '—';
+
+  // ETA display
+  if (printer.print_time_left > 0) {
+    const pct = Math.round((printer.progress || 0) * 100);
+    const h = Math.floor(printer.print_time_left / 3600);
+    const m = Math.floor((printer.print_time_left % 3600) / 60);
+    eta.textContent = `${pct}% · ~${h}:${String(m).padStart(2, '0')} übrig`;
+  } else {
+    eta.textContent = '';
+  }
 }
 
 function capitalise(s) {

@@ -206,4 +206,34 @@ body {
   letter-spacing: 0.05em;
 }
 
+/* ── Print ETA ─────────────────────────────── */
+.printer-eta {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  min-height: 1em;
+}
+
+/* ── Print Complete Banner ─────────────────── */
+#print-complete-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--online);
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 20px;
+  z-index: 150;
+  cursor: pointer;
+  animation: slide-down 0.3s ease;
+}
+
+@keyframes slide-down {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(0); }
+}
+
 .hidden { display: none !important; }
