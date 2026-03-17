@@ -18,7 +18,7 @@ const { captureFrames }  = require('./services/frameCapture');
 const { detectFaces }    = require('./services/faceDetector');
 const { uploadFrame, addToAlbum } = require('./services/immichClient');
 
-const ENABLED              = process.env.IMMICH_ENABLED !== 'false';
+const ENABLED              = process.env.IMMICH_ENABLED === 'true';
 const MAX_UPLOADS_PER_EVENT = 3;   // max unique-person frames uploaded per motion event
 const COOLDOWN_MS          = 2 * 60 * 1000;  // 2-minute cooldown per camera after upload
 const IOU_THRESHOLD        = 0.4;  // IoU above this → same person track

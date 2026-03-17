@@ -1,6 +1,5 @@
 // ── Config ──────────────────────────────────────────────────────────
-const BACKEND_WS   = `ws://${location.hostname}:3000`;
-const BACKEND_HTTP = `http://${location.hostname}:3000`;
+const BACKEND_WS   = (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host + '/ws';
 const PRINTER_POLL_INTERVAL = 10000; // ms
 
 // ── State ───────────────────────────────────────────────────────────
@@ -20,11 +19,11 @@ const printerPrevState = {};
 async function init() {
   // Load UI config (motion delay etc.)
   try {
-    const uiCfg = await fetch(`${BACKEND_HTTP}/api/config/ui`).then(r => r.json());
+    const uiCfg = await fetch(`/api/config/ui`).then(r => r.json());
     if (uiCfg.motion_clear_delay_ms) MOTION_CLEAR_DELAY = uiCfg.motion_clear_delay_ms;
   } catch (_) {}
 
-  cameras = await fetch(`${BACKEND_HTTP}/api/cameras`).then(r => r.json()).catch(() => []);
+  cameras = await fetch(`/api/cameras`).then(r => r.json()).catch(() => []);
   renderPiP();
   connectWebSocket();
   pollPrinters();
@@ -158,7 +157,7 @@ function triggerCompletionAlert(printerId, filename) {
 
 // ── Printer Polling ───────────────────────────────────────────────────
 async function pollPrinters() {
-  const data = await fetch(`${BACKEND_HTTP}/api/printers`).then(r => r.json()).catch(() => null);
+  const data = await fetch(`/api/printers`).then(r => r.json()).catch(() => null);
   if (!data) return;
 
   updatePrinterCard('crx', data.crx_pro);

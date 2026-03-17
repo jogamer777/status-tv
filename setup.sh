@@ -48,7 +48,7 @@ After=network.target
 
 [Service]
 Type=simple
-User=fj-admin
+User=$(whoami)
 WorkingDirectory=${SCRIPT_DIR}/backend
 ExecStart=/usr/bin/node server.js
 Restart=always
