@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
@@ -6,7 +6,16 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 
-const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+// Load config with error handling
+let config;
+try {
+  config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+} catch (err) {
+  console.error('Failed to load config.json:', err.message);
+  console.error('Copy config.example.json to config.json and edit it.');
+  process.exit(1);
+}
+
 const motionAnalyzer = require('./motionAnalyzer');
 
 const app = express();
@@ -19,6 +28,9 @@ const wss = new WebSocket.Server({ server });
 
 // Track active motion per camera
 const motionState = {};
+
+// Valid camera IDs from config
+const validCameraIds = new Set(config.motioneye.cameras.map(c => c.id));
 
 // Broadcast to all connected clients
 function broadcast(data) {
@@ -38,9 +50,15 @@ wss.on('connection', (ws) => {
 });
 
 // MotionEye webhook endpoint — called by motion on event
-app.post('/webhook/motion/:cameraId/:event', (req, res) => {
+app.post('/webhook/motion/:cameraId/:event', async (req, res) => {
   const { cameraId, event } = req.params;
   const id = parseInt(cameraId);
+
+  // Validate camera ID against config
+  if (isNaN(id) || !validCameraIds.has(id)) {
+    console.warn(`Webhook: unknown camera ID ${cameraId}`);
+    return res.sendStatus(400);
+  }
 
   if (event === 'start') {
     motionState[id] = true;
@@ -55,7 +73,13 @@ app.post('/webhook/motion/:cameraId/:event', (req, res) => {
     broadcast({ type: 'motion', cameraId: id, active: false, motionState });
     // Finalize capture and upload best frames
     const cam = config.motioneye.cameras.find(c => c.id === id);
-    if (cam) motionAnalyzer.finalize(id, cam.name);
+    if (cam) {
+      try {
+        await motionAnalyzer.finalize(id, cam.name);
+      } catch (err) {
+        console.error(`[motionAnalyzer] finalize error camera ${id}:`, err.message);
+      }
+    }
   }
 
   res.sendStatus(200);

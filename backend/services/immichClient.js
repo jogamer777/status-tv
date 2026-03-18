@@ -7,7 +7,7 @@
 
 const fetch    = require('node-fetch');
 const FormData = require('form-data');
-require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
+// dotenv is loaded once in server.js — env vars are already available
 
 const IMMICH_URL   = process.env.IMMICH_URL   || '';
 const IMMICH_KEY   = process.env.IMMICH_API_KEY || '';

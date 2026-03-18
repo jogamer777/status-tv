@@ -12,7 +12,7 @@
  * - Per-camera cooldown prevents flooding on repeated motion bursts
  */
 
-require('dotenv').config({ path: require('path').join(__dirname, '.env') });
+// dotenv is loaded once in server.js — no duplicate loading here
 
 const { captureFrames }  = require('./services/frameCapture');
 const { detectFaces }    = require('./services/faceDetector');
@@ -101,8 +101,18 @@ function startCapture(cameraId, camConfig, host) {
     return;
   }
 
+  // Abort any leftover stream from a previous event
+  if (state.abortCtrl && !state.abortCtrl.signal.aborted) {
+    state.abortCtrl.abort();
+  }
+
   const abort = new AbortController();
-  cameraState[cameraId] = { abortCtrl: abort, running: true, candidates: [], host };
+  cameraState[cameraId] = {
+    abortCtrl: abort,
+    running: true,
+    candidates: [],
+    lastUploadAt: state.lastUploadAt || null
+  };
 
   const streamUrl = `http://${host}:${camConfig.stream_port}`;
   console.log(`[motionAnalyzer] Start capture camera ${cameraId} from ${streamUrl}`);
@@ -127,7 +137,9 @@ function startCapture(cameraId, camConfig, host) {
         await finalize(cameraId, camConfig.name);
       }
     }
-  })();
+  })().catch(err => {
+    console.error(`[motionAnalyzer] Unhandled error camera ${cameraId}:`, err.message);
+  });
 }
 
 /**
@@ -146,7 +158,10 @@ async function finalize(cameraId, cameraName) {
   const { candidates } = state;
   console.log(`[motionAnalyzer] Camera ${cameraId}: ${candidates.length} candidate frame(s)`);
 
-  if (candidates.length === 0) return;
+  if (candidates.length === 0) {
+    state.candidates = [];
+    return;
+  }
 
   const bestFrames = selectBestFrames(candidates);
   console.log(`[motionAnalyzer] Uploading ${bestFrames.length} frame(s) to Immich`);
@@ -162,6 +177,7 @@ async function finalize(cameraId, cameraName) {
     state.lastUploadAt = Date.now();
   }
 
+  // Free frame buffers
   state.candidates = [];
 }
 
