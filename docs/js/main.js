@@ -38,10 +38,17 @@ function renderPiP() {
     const wrap = document.createElement('div');
     wrap.className = 'camera-pip';
     wrap.dataset.camId = cam.id;
-    wrap.innerHTML = `
-      <img src="http://${location.hostname}:${cam.stream_port}" alt="${cam.name}">
-      <div class="camera-pip-label">${cam.name}</div>
-    `;
+
+    const img = document.createElement('img');
+    img.src = `http://${location.hostname}:${cam.stream_port}`;
+    img.alt = cam.name;
+
+    const label = document.createElement('div');
+    label.className = 'camera-pip-label';
+    label.textContent = cam.name;
+
+    wrap.appendChild(img);
+    wrap.appendChild(label);
     container.appendChild(wrap);
   });
 }
@@ -55,10 +62,17 @@ function renderAlertView() {
   activeCams.forEach(cam => {
     const cell = document.createElement('div');
     cell.className = 'camera-alert-cell motion-active';
-    cell.innerHTML = `
-      <img src="http://${location.hostname}:${cam.stream_port}" alt="${cam.name}">
-      <div class="camera-alert-label">${cam.name}</div>
-    `;
+
+    const img = document.createElement('img');
+    img.src = `http://${location.hostname}:${cam.stream_port}`;
+    img.alt = cam.name;
+
+    const label = document.createElement('div');
+    label.className = 'camera-alert-label';
+    label.textContent = cam.name;
+
+    cell.appendChild(img);
+    cell.appendChild(label);
     grid.appendChild(cell);
   });
 }
