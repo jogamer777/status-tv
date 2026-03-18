@@ -32,6 +32,12 @@ const motionState = {};
 // Valid camera IDs from config
 const validCameraIds = new Set(config.motioneye.cameras.map(c => c.id));
 
+// Extract MotionEye hostname for MJPEG stream URLs
+const motioneyeHost = (() => {
+  try { return new URL(config.motioneye.url).hostname; }
+  catch { return 'localhost'; }
+})();
+
 // Broadcast to all connected clients
 function broadcast(data) {
   const msg = JSON.stringify(data);
@@ -66,7 +72,7 @@ app.post('/webhook/motion/:cameraId/:event', async (req, res) => {
     broadcast({ type: 'motion', cameraId: id, active: true, motionState });
     // Trigger Immich frame capture pipeline
     const cam = config.motioneye.cameras.find(c => c.id === id);
-    if (cam) motionAnalyzer.startCapture(id, cam, req.hostname || 'localhost');
+    if (cam) motionAnalyzer.startCapture(id, cam, motioneyeHost);
   } else if (event === 'end') {
     motionState[id] = false;
     console.log(`Motion END on camera ${id}`);
