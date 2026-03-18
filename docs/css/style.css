@@ -300,11 +300,14 @@ body {
 
 #camera-grid-alert {
   display: flex;
+  flex-wrap: wrap;
   flex: 1;
 }
 
 .camera-alert-cell {
-  flex: 1;
+  flex: 1 1 50%;
+  min-width: 50%;
+  max-height: 50%;
   position: relative;
   border: 1px solid #1a1a1a;
   overflow: hidden;

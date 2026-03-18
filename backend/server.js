@@ -66,6 +66,10 @@ app.post('/webhook/motion/:cameraId/:event', async (req, res) => {
     return res.sendStatus(400);
   }
 
+  if (event !== 'start' && event !== 'end') {
+    return res.sendStatus(400);
+  }
+
   if (event === 'start') {
     motionState[id] = true;
     console.log(`Motion START on camera ${id}`);
